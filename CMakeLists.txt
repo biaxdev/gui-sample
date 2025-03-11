@@ -8,7 +8,6 @@ pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
 pkg_check_modules(CAIROMM REQUIRED cairomm-1.0)
 
 find_package(nlohmann_json REQUIRED)
-find_package(SDL2 REQUIRED)
 
 add_executable(${PROJECT_NAME}
     main.cpp
