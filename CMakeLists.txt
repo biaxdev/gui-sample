@@ -1,3 +1,6 @@
+// This is the CMakeLists.txt file for the project.
+//It describes how to build the project using CMake.
+
 cmake_minimum_required(VERSION 3.5.1)
 
 project(sensor-dashboard VERSION 1.0.0 LANGUAGES CXX)

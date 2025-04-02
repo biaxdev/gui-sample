@@ -1,5 +1,11 @@
 #include "canvas.h"
 
+//Another commnet for this file
+
+//I continue to write comments
+
+// Include more comments for this particular commit
+
 
 bool CCanvas::on_draw(Cairo::RefPtr<Cairo::Context> const & cr)
 {
