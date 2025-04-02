@@ -1,7 +1,7 @@
 #include "canvas.h"
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
-
+// A comment for this file
 
 int main(int argc, char** argv)
     {
