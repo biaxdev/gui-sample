@@ -29,6 +29,7 @@ target_link_libraries(${PROJECT_NAME}
     ${CAIROMM_LIBRARIES}
 )
 
+// This is a link_directories() function that adds the necessary link directories for the GTKMM and CAIROMM libraries.
 # Add other necessary link directories
 link_directories(${GTKMM_LIBRARY_DIRS} ${CAIROMM_LIBRARY_DIRS})
 
