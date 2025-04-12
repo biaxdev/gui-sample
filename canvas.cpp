@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 CCanvas::CCanvas()
 {
@@ -41,29 +42,25 @@ bool CCanvas::on_fifo_read(Glib::IOCondition condition)
     return true;
 }
 
-std::string CCanvas::format_distance() const
+std::vector<std::string> CCanvas::format_all_units() const
 {
     std::ostringstream oss;
+    std::vector<std::string> units;
+
     oss << std::fixed << std::setprecision(2);
+    oss.str(""); oss.clear();
+    oss << (raw_distance_mm_ / 25.4); units.push_back(oss.str() + " in");
 
-    switch (unit_index_) {
-        case 0: // mm
-            oss << raw_distance_mm_ << " mm";
-            break;
-        case 1: // cm
-            oss << (raw_distance_mm_ / 10.0) << " cm";
-            break;
-        case 2: // m
-            oss << (raw_distance_mm_ / 1000.0) << " m";
-            break;
-        case 3: // inch
-            oss << (raw_distance_mm_ / 25.4) << " in";
-            break;
-        default:
-            oss << raw_distance_mm_ << " mm";
-    }
+    oss.str(""); oss.clear();
+    oss << (raw_distance_mm_ / 10.0); units.push_back(oss.str() + " cm");
 
-    return oss.str();
+    oss.str(""); oss.clear();
+    oss << (raw_distance_mm_ / 1000.0); units.push_back(oss.str() + " m");
+
+    oss.str(""); oss.clear();
+    oss << raw_distance_mm_; units.push_back(oss.str() + " mm");
+
+    return units;
 }
 
 bool CCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -72,15 +69,40 @@ bool CCanvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     double width = allocation.get_width();
     double height = allocation.get_height();
 
-    cr->set_source_rgb(1.0, 1.0, 1.0); cr->paint();
+    cr->set_source_rgb(1.0, 1.0, 1.0);
+    cr->paint();
 
-    cr->set_source_rgb(0.1, 0.1, 0.1);
-    cr->select_font_face("Sans", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_BOLD);
-    cr->set_font_size(30.0);
+    std::vector<std::string> labels = format_all_units();
 
-    std::string text = format_distance();
-    cr->move_to(20, height / 2);
-    cr->show_text(text);
+    double box_width = width - 40;
+    double box_height = 60;
+    double x = 20;
+    double y = 20;
+    double spacing = 20;
+    double radius = 12;
+
+    for (const auto& label : labels)
+    {
+        // Draw rounded rectangle
+        cr->set_source_rgb(0.2, 0.7, 0.9);
+        cr->begin_new_path();
+        cr->arc(x + box_width - radius, y + radius, radius, -M_PI_2, 0);
+        cr->arc(x + box_width - radius, y + box_height - radius, radius, 0, M_PI_2);
+        cr->arc(x + radius, y + box_height - radius, radius, M_PI_2, M_PI);
+        cr->arc(x + radius, y + radius, radius, M_PI, 3 * M_PI_2);
+        cr->close_path();
+        cr->fill();
+
+        // Draw label
+        cr->set_source_rgb(1, 1, 1);
+        cr->select_font_face("Sans", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_BOLD);
+        cr->set_font_size(20);
+
+        cr->move_to(x + 20, y + box_height / 2 + 7);
+        cr->show_text(label);
+
+        y += box_height + spacing;
+    }
 
     return true;
 }

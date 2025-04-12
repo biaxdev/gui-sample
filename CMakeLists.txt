@@ -12,6 +12,7 @@ find_package(SDL2 REQUIRED)
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    dashboard_window.cpp
     canvas.cpp
 )
 
